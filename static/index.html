@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BotCaptcha - AI-Only Challenge</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Courier New', monospace;
             background: #0a0a0a;
@@ -17,13 +14,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
             padding: 20px;
         }
+
         h1 {
             font-size: 2em;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-shadow: 0 0 10px #00ff00;
         }
         .subtitle {
@@ -31,16 +28,39 @@
             margin-bottom: 20px;
             color: #00aa00;
         }
-        #text-container {
-            width: 800px;
+
+        /* ── Two-column layout ── */
+        .challenge-row {
+            display: flex;
+            gap: 20px;
+            width: 860px;
             max-width: 100%;
-            height: 280px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+
+        /* ── Word frequency column ── */
+        .word-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .puzzle-label {
+            font-size: 0.78em;
+            color: #00aa00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #text-container {
+            height: 240px;
             overflow-y: auto;
             border: 2px solid #00ff00;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 15px rgba(0,255,0,0.25);
             background: #000;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 12px;
         }
         #challenge-text {
             font-family: 'Courier New', monospace;
@@ -50,42 +70,83 @@
             white-space: pre-wrap;
             word-break: break-word;
         }
-        #challenge-text.placeholder {
-            color: #005500;
-            font-size: 0.9em;
-        }
-        .answer-label {
-            width: 800px;
-            max-width: 100%;
-            font-size: 0.85em;
-            color: #00aa00;
-            margin-bottom: 6px;
-        }
+        #challenge-text.placeholder { color: #005500; font-size: 0.9em; }
+
         #answer-input {
-            width: 800px;
-            max-width: 100%;
-            height: 110px;
+            width: 100%;
+            height: 100px;
             background: #001a00;
             color: #00ff00;
             border: 2px solid #00ff00;
             font-family: 'Courier New', monospace;
-            font-size: 0.85em;
-            padding: 10px;
+            font-size: 0.82em;
+            padding: 8px;
             resize: vertical;
-            margin-bottom: 15px;
-            display: block;
         }
-        #answer-input:focus {
-            outline: none;
-            box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+        #answer-input:focus { outline: none; box-shadow: 0 0 8px rgba(0,255,0,0.4); }
+        #answer-input::placeholder { color: #005500; }
+
+        /* ── Grid column ── */
+        .grid-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        #answer-input::placeholder {
-            color: #005500;
+
+        #coord-list {
+            font-size: 11px;
+            color: #00cc00;
+            line-height: 1.7;
+            padding: 10px;
+            border: 1px solid #005500;
+            background: #001a00;
+            min-height: 52px;
+            width: 100%;
         }
+        #coord-list .coord-placeholder { color: #005500; }
+
+        #grid-container {
+            display: grid;
+            gap: 3px;
+            background: #001a00;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 15px rgba(0,255,0,0.25);
+            padding: 4px;
+        }
+
+        .grid-cell {
+            width: 38px;
+            height: 38px;
+            background: #001500;
+            border: 1px solid #003300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #00ff00;
+            cursor: default;
+            user-select: none;
+        }
+        .grid-cell {
+            cursor: pointer;
+        }
+        .grid-cell:hover {
+            background: #002200;
+            border-color: #00aa00;
+        }
+        .grid-cell.selected {
+            background: #004400;
+            border-color: #00ff00;
+            box-shadow: inset 0 0 6px rgba(0,255,0,0.4);
+        }
+
+        /* ── Controls ── */
         .controls {
             display: flex;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         button {
             background: #001a00;
@@ -97,69 +158,68 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        button:hover:not(:disabled) {
-            background: #003300;
-            box-shadow: 0 0 10px #00ff00;
-        }
-        button:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        button:hover:not(:disabled) { background: #003300; box-shadow: 0 0 10px #00ff00; }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
         #status {
             text-align: center;
             font-size: 1.05em;
-            min-height: 50px;
+            min-height: 44px;
             padding: 10px;
             border: 1px solid #00aa00;
             background: #001a00;
-            width: 800px;
+            width: 860px;
             max-width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
-        .timer {
-            font-size: 1.3em;
-            color: #ffff00;
-            text-shadow: 0 0 10px #ffff00;
-        }
+        .timer { font-size: 1.3em; color: #ffff00; text-shadow: 0 0 10px #ffff00; }
         .success { color: #00ff00; }
-        .error {
-            color: #ff4444;
-            text-shadow: 0 0 8px #ff0000;
-        }
+        .error { color: #ff4444; text-shadow: 0 0 8px #ff0000; }
+
         .info {
-            padding: 15px;
+            padding: 14px;
             border: 1px solid #00aa00;
             background: #001a00;
-            width: 800px;
+            width: 860px;
             max-width: 100%;
-            font-size: 0.82em;
+            font-size: 0.80em;
             line-height: 1.7;
             color: #00cc00;
         }
-        .info code {
-            color: #ffff00;
-            background: #002200;
-            padding: 1px 4px;
-        }
-        .info strong {
-            color: #00ff00;
-        }
+        .info strong { color: #00ff00; }
+        .info code { color: #ffff00; background: #002200; padding: 1px 4px; }
     </style>
 </head>
 <body>
     <h1>BotCaptcha</h1>
     <div class="subtitle">AI-Only Challenge: Humans Need Not Apply</div>
 
-    <div id="text-container">
-        <pre id="challenge-text" class="placeholder">[ Click "Start Challenge" to load the passage ]</pre>
-    </div>
+    <div class="challenge-row">
+        <!-- Word frequency puzzle -->
+        <div class="word-col">
+            <div class="puzzle-label">Puzzle 1 — Word Frequency</div>
+            <div id="text-container">
+                <pre id="challenge-text" class="placeholder">[ Start a challenge to load the passage ]</pre>
+            </div>
+            <div class="puzzle-label">Your answer — JSON word→count map:</div>
+            <textarea
+                id="answer-input"
+                placeholder='{"the": 12, "and": 8, "for": 5, ...}'
+                spellcheck="false"
+            ></textarea>
+        </div>
 
-    <div class="answer-label">Your answer — JSON object mapping each word to its count:</div>
-    <textarea
-        id="answer-input"
-        placeholder='{"the": 12, "and": 8, "for": 5, ...}'
-        spellcheck="false"
-    ></textarea>
+        <!-- Grid ordering puzzle -->
+        <div class="grid-col">
+            <div class="puzzle-label">Puzzle 2 — Grid Order</div>
+            <div id="coord-list">
+                <span class="coord-placeholder">[ Target squares will appear here in jumbled order ]</span>
+            </div>
+            <div id="grid-container">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
 
     <div class="controls">
         <button id="startBtn">Start Challenge</button>
@@ -169,20 +229,19 @@
     <div id="status">Click "Start Challenge" to begin</div>
 
     <div class="info">
-        <strong>How it works:</strong><br>
-        1. Click "Start Challenge" to receive a passage of text<br>
-        2. Count the number of times each word appears in the passage<br>
-        3. Enter your answer as a JSON object: <code>{"word": count, "other": count, ...}</code><br>
-        4. Click "Submit Answer" before the time limit expires<br>
-        5. 80% of word counts must be exactly correct to pass<br>
+        <strong>Puzzle 1 — Word Frequency:</strong> Count each word in the passage and submit
+        as JSON: <code>{"word": count, ...}</code><br>
+        <strong>Puzzle 2 — Grid Order:</strong> A paragraph describes target squares in
+        <em>scrambled</em> order using natural language. Parse it to find the cells,
+        then click them in <strong>reading order</strong> (top→bottom, left→right).
+        Numbers show your selection order.<br>
+        Both puzzles must score ≥80% to pass.<br>
         <br>
-        <strong>For AI integration (programmatic API):</strong><br>
-        <code>const c = await window.BotCaptchaAPI.getChallenge();</code><br>
-        <code>// c.text_content — the passage &nbsp; c.challenge_id — needed for submit</code><br>
-        <code>const result = await window.BotCaptchaAPI.submitChallenge(c.challenge_id, freqMap);</code><br>
-        <br>
-        <strong>Why humans fail:</strong> Counting word frequencies across 150–250 words and
-        producing exact JSON output is trivial for a program but extremely tedious for a person.
+        <strong>AI API:</strong>
+        <code>const c = await window.BotCaptchaAPI.getChallenge();</code>
+        — <code>c.text_content</code>, <code>c.grid_coords</code> (jumbled), <code>c.grid_size</code><br>
+        <code>// c.grid_coords_text — natural language paragraph (parse with LLM)</code><br>
+        <code>await window.BotCaptchaAPI.submitChallenge(c.challenge_id, wordFreqMap, sortedCoords);</code>
     </div>
 
     <script src="app.js"></script>

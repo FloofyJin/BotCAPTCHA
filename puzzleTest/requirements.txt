@@ -3,3 +3,6 @@ requests>=2.31.0
 
 # Environment variables
 python-dotenv>=1.0.0
+
+# OpenAI SDK — used to parse the natural-language grid description
+openai>=1.0.0

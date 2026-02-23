@@ -22,6 +22,9 @@ pub struct ChallengeConfig {
     pub duration_ms_min: u64,
     pub duration_ms_max: u64,
     pub word_pool: Vec<String>,
+    pub grid_size: usize,
+    pub grid_coords_min: usize,
+    pub grid_coords_max: usize,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -62,6 +65,9 @@ impl Config {
                 .iter()
                 .map(|s| s.to_string())
                 .collect(),
+                grid_size: 10,
+                grid_coords_min: 10,
+                grid_coords_max: 15,
             },
             validation: ValidationConfig {
                 min_time_ms: 0,

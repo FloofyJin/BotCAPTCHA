@@ -1,7 +1,10 @@
-"""Main test agent for BotCaptcha text frequency challenge."""
+"""Main test agent for BotCaptcha text frequency + grid ordering challenge."""
 
+import json
+import re
 import time
 import requests
+from openai import OpenAI
 from config import Config
 
 
@@ -34,11 +37,46 @@ class TestAgent:
             freq[word] = freq.get(word, 0) + 1
         return freq
 
-    def _submit_answer(self, challenge_id, word_frequencies):
-        """Submit the word frequency answer to the server."""
+    def _parse_grid_coords_with_llm(self, grid_coords_text: str, grid_size: int) -> list:
+        """
+        Use an LLM to extract grid coordinates from the natural-language paragraph.
+        The prose uses varied phrasings so a simple regex can't reliably parse it.
+        """
+        client = OpenAI(api_key=Config.OPENAI_API_KEY)
+
+        prompt = (
+            f"Extract all grid cell coordinates from this description.\n"
+            f"The grid uses 0-based indexing: columns 0–{grid_size - 1} (left = 0) "
+            f"and rows 0–{grid_size - 1} (top = 0).\n\n"
+            f"Description:\n{grid_coords_text}\n\n"
+            f'Return ONLY a JSON array, e.g. [{{"col": 3, "row": 0}}, {{"col": 5, "row": 2}}]. '
+            f"No explanation."
+        )
+
+        response = client.chat.completions.create(
+            model=Config.OPENAI_MODEL,
+            max_tokens=512,
+            temperature=0,
+            messages=[{"role": "user", "content": prompt}],
+        )
+
+        content = response.choices[0].message.content.strip()
+        match = re.search(r"\[[\s\S]*\]", content)
+        return json.loads(match.group(0) if match else content)
+
+    def _sort_grid_coords(self, coords: list) -> list:
+        """Sort extracted coordinates into reading order (row asc, then col asc)."""
+        return sorted(coords, key=lambda c: (c["row"], c["col"]))
+
+    def _submit_answer(self, challenge_id, word_frequencies, sorted_coords):
+        """Submit both puzzle answers to the server."""
         resp = self.session.post(
             f"{Config.BOTCAPTCHA_URL}/api/submit",
-            json={"challenge_id": challenge_id, "answer": word_frequencies},
+            json={
+                "challenge_id": challenge_id,
+                "answer": word_frequencies,
+                "grid_answer": sorted_coords,
+            },
             timeout=10,
         )
         resp.raise_for_status()
@@ -70,18 +108,28 @@ class TestAgent:
             challenge = self._get_challenge()
             result["challenge_id"] = challenge["challenge_id"]
 
-            # Count word frequencies
+            # Puzzle 1: count word frequencies
             word_freq = self._count_words(challenge["text_content"])
             result["num_words"] = sum(word_freq.values())
             result["num_unique"] = len(word_freq)
 
+            # Puzzle 2: parse prose description with LLM, then sort into reading order
+            raw_coords = self._parse_grid_coords_with_llm(
+                challenge["grid_coords_text"], challenge["grid_size"]
+            )
+            sorted_coords = self._sort_grid_coords(raw_coords)
+
             if Config.VERBOSE:
                 print(f"\nChallenge {challenge['challenge_id']}:")
                 print(f"  Words: {result['num_words']} total, {result['num_unique']} unique")
+                print(f"  Grid text: \"{challenge['grid_coords_text'][:80]}...\"")
+                print(f"  {Config.OPENAI_MODEL} extracted {len(raw_coords)} coords → sorted: {[(c['col'], c['row']) for c in sorted_coords]}")
                 print(f"  Duration limit: {challenge['duration_ms']}ms")
 
-            # Submit answer
-            submission_result = self._submit_answer(challenge["challenge_id"], word_freq)
+            # Submit both answers
+            submission_result = self._submit_answer(
+                challenge["challenge_id"], word_freq, sorted_coords
+            )
 
             result["success"] = submission_result.get("success", False)
             result["score"] = submission_result.get("score")

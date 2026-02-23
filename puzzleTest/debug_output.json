@@ -1,165 +1,187 @@
 {
-  "challenge": {
-    "challenge_id": "0721db9e-f39e-4aba-aa03-bd2ae86524b2",
-    "duration_ms": 3370,
-    "num_tiles": 21,
-    "grid_width": 800,
-    "grid_height": 600
+  "challenge_id": "e6f877c2-8617-435e-8feb-a7fdae40e1c0",
+  "duration_ms": 5780,
+  "word_puzzle": {
+    "total_words": 195,
+    "unique_words": 50,
+    "frequencies": {
+      "flag": 6,
+      "run": 4,
+      "how": 4,
+      "one": 3,
+      "not": 6,
+      "all": 7,
+      "list": 5,
+      "day": 6,
+      "data": 5,
+      "and": 5,
+      "she": 3,
+      "too": 5,
+      "its": 6,
+      "port": 3,
+      "path": 4,
+      "has": 4,
+      "hash": 5,
+      "get": 5,
+      "say": 9,
+      "him": 3,
+      "way": 3,
+      "old": 5,
+      "new": 4,
+      "the": 2,
+      "node": 2,
+      "you": 4,
+      "code": 5,
+      "put": 7,
+      "was": 7,
+      "see": 2,
+      "loop": 3,
+      "host": 3,
+      "can": 5,
+      "are": 3,
+      "two": 4,
+      "link": 3,
+      "type": 5,
+      "out": 3,
+      "our": 6,
+      "for": 1,
+      "set": 1,
+      "byte": 4,
+      "but": 1,
+      "who": 3,
+      "file": 4,
+      "tree": 3,
+      "now": 1,
+      "let": 1,
+      "use": 1,
+      "man": 1
+    }
   },
-  "actual_tiles": [
-    {
-      "id": 0,
-      "text": "GREEN",
-      "x": 522.7708,
-      "y": 274.3736,
-      "bbox": {
-        "x": 492.7708,
-        "y": 244.3736,
-        "width": 60,
-        "height": 60
+  "grid_puzzle": {
+    "grid_size": 10,
+    "prose": "Identify these 13 positions on the grid: the cell where column 7 meets row 5, and then the cell where column 9 meets row 0, then column 8, row 9; next, column 7, row 3. Also mark column 9, row 4, as well as the cell where column 9 meets row 1, and then the square at column 4 in row 6. Another target is at 1 columns from the left, 2 rows from the top; next, the cell where column 7 meets row 0, and then the square at column 6 in row 8, then the cell where column 9 meets row 6; next, the square at column 9 in row 8. Also mark the cell at column 3 and row 3. Note: the positions above are listed in scrambled order \u2014 you must select them on the grid from top to bottom, left to right.",
+    "llm_raw_output": "```json\n[{\"col\": 1, \"row\": 2}, {\"col\": 3, \"row\": 3}, {\"col\": 7, \"row\": 0}, {\"col\": 9, \"row\": 0}, {\"col\": 7, \"row\": 3}, {\"col\": 9, \"row\": 1}, {\"col\": 4, \"row\": 6}, {\"col\": 7, \"row\": 5}, {\"col\": 9, \"row\": 4}, {\"col\": 9, \"row\": 6}, {\"col\": 6, \"row\": 8}, {\"col\": 9, \"row\": 8}, {\"col\": 8, \"row\": 9}]\n```",
+    "extracted_coords": [
+      {
+        "col": 1,
+        "row": 2
+      },
+      {
+        "col": 3,
+        "row": 3
+      },
+      {
+        "col": 7,
+        "row": 0
+      },
+      {
+        "col": 9,
+        "row": 0
+      },
+      {
+        "col": 7,
+        "row": 3
+      },
+      {
+        "col": 9,
+        "row": 1
+      },
+      {
+        "col": 4,
+        "row": 6
+      },
+      {
+        "col": 7,
+        "row": 5
+      },
+      {
+        "col": 9,
+        "row": 4
+      },
+      {
+        "col": 9,
+        "row": 6
+      },
+      {
+        "col": 6,
+        "row": 8
+      },
+      {
+        "col": 9,
+        "row": 8
+      },
+      {
+        "col": 8,
+        "row": 9
       }
-    },
-    {
-      "id": 1,
-      "text": "FOUR",
-      "x": 637.6028,
-      "y": 339.61215,
-      "bbox": {
-        "x": 607.6028,
-        "y": 309.61215,
-        "width": 60,
-        "height": 60
+    ],
+    "sorted_coords": [
+      {
+        "col": 7,
+        "row": 0
+      },
+      {
+        "col": 9,
+        "row": 0
+      },
+      {
+        "col": 9,
+        "row": 1
+      },
+      {
+        "col": 1,
+        "row": 2
+      },
+      {
+        "col": 3,
+        "row": 3
+      },
+      {
+        "col": 7,
+        "row": 3
+      },
+      {
+        "col": 9,
+        "row": 4
+      },
+      {
+        "col": 7,
+        "row": 5
+      },
+      {
+        "col": 4,
+        "row": 6
+      },
+      {
+        "col": 9,
+        "row": 6
+      },
+      {
+        "col": 6,
+        "row": 8
+      },
+      {
+        "col": 9,
+        "row": 8
+      },
+      {
+        "col": 8,
+        "row": 9
       }
-    },
-    {
-      "id": 2,
-      "text": "RED",
-      "x": 668.42365,
-      "y": 384.46234,
-      "bbox": {
-        "x": 638.42365,
-        "y": 354.46234,
-        "width": 60,
-        "height": 60
-      }
-    },
-    {
-      "id": 3,
-      "text": "GAMMA",
-      "x": 168.81848,
-      "y": 160.95686,
-      "bbox": {
-        "x": 138.81848,
-        "y": 130.95686,
-        "width": 60,
-        "height": 60
-      }
-    },
-    {
-      "id": 4,
-      "text": "ALPHA",
-      "x": 154.31003,
-      "y": 589.91925,
-      "bbox": {
-        "x": 124.31003000000001,
-        "y": 559.91925,
-        "width": 60,
-        "height": 60
-      }
-    },
-    {
-      "id": 5,
-      "text": "RED",
-      "x": 660.2622,
-      "y": 150.89786,
-      "bbox": {
-        "x": 630.2622,
-        "y": 120.89786000000001,
-        "width": 60,
-        "height": 60
-      }
-    },
-    {
-      "id": 6,
-      "text": "DELTA",
-      "x": 35.77671,
-      "y": 326.73868,
-      "bbox": {
-        "x": 5.776710000000001,
-        "y": 296.73868,
-        "width": 60,
-        "height": 60
-      }
-    },
-    {
-      "id": 7,
-      "text": "ZERO",
-      "x": 465.07245,
-      "y": 295.47858,
-      "bbox": {
-        "x": 435.07245,
-        "y": 265.47858,
-        "width": 60,
-        "height": 60
-      }
-    }
-  ],
-  "detected_boxes": [
-    {
-      "x": 50.0,
-      "y": 450.0,
-      "width": 85.0,
-      "height": 85.0
-    },
-    {
-      "x": 200.0,
-      "y": 100.0,
-      "width": 85.0,
-      "height": 85.0
-    },
-    {
-      "x": 300.0,
-      "y": 250.0,
-      "width": 85.0,
-      "height": 85.0
-    },
-    {
-      "x": 400.0,
-      "y": 300.0,
-      "width": 85.0,
-      "height": 85.0
-    },
-    {
-      "x": 500.0,
-      "y": 200.0,
-      "width": 85.0,
-      "height": 85.0
-    },
-    {
-      "x": 600.0,
-      "y": 100.0,
-      "width": 85.0,
-      "height": 85.0
-    },
-    {
-      "x": 650.0,
-      "y": 300.0,
-      "width": 85.0,
-      "height": 85.0
-    }
-  ],
+    ]
+  },
   "result": {
-    "success": false,
-    "message": "Failed: Score 0.00% (need 80%)",
-    "score": 0
+    "success": true,
+    "message": "Success! Word: 100.0%, Grid: 100.0%",
+    "score": 1.0,
+    "word_score": 1.0,
+    "grid_score": 1.0
   },
   "timing": {
-    "load_time_s": 0.7860927581787109,
-    "screenshot_time_s": 0.02604222297668457,
-    "vision_time_s": 5.42648458480835,
-    "submit_time_s": 0.01760721206665039,
-    "total_time_ms": 6276.840686798096,
-    "max_allowed_ms": 3370,
-    "exceeded": true
+    "load_ms": 2.7322769165039062,
+    "llm_ms": 1957.8993320465088,
+    "submit_ms": 1.3623237609863281,
+    "total_ms": 1962.4180793762207,
+    "limit_ms": 5780
   }
 }

@@ -83,7 +83,6 @@ def main():
         test_summary = {
             "timestamp": datetime.now().isoformat(),
             "config": {
-                "model": Config.OPENAI_MODEL,
                 "url": Config.BOTCAPTCHA_URL,
                 "num_tests": args.num_tests,
             },

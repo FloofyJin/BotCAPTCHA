@@ -24,6 +24,11 @@ word_pool = [
     "loop", "list", "hash", "tree", "link", "type", "flag",
 ]
 
+# Grid ordering puzzle
+grid_size = 10          # Grid dimensions (grid_size x grid_size)
+grid_coords_min = 10    # Min number of target cells
+grid_coords_max = 15    # Max number of target cells
+
 [validation]
 # Minimum time before submission is accepted (0 = no minimum, bots can answer instantly)
 min_time_ms = 0
