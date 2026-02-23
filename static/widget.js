@@ -95,22 +95,22 @@
       box-shadow: 0 20px 60px rgba(0,0,0,.3);
       overflow: hidden;
       display: flex; flex-direction: column;
+      position: relative;
     }
 
     /* Dialog header */
     .dialog-header {
-      display: flex; align-items: center; gap: 10px;
-      padding: 16px 20px 12px;
+      padding: 16px 48px 12px 20px;
       border-bottom: 1px solid #e5e7eb;
     }
-    .dialog-title { flex: 1; font-size: 15px; font-weight: 700; color: #111827; }
+    .dialog-title { font-size: 15px; font-weight: 700; color: #111827; }
     .dialog-sub   { font-size: 12px; color: #6b7280; margin-top: 1px; }
     .close-btn {
+      position: absolute; top: 12px; right: 12px;
       width: 28px; height: 28px; border-radius: 6px;
       border: 1px solid #e5e7eb; background: #fff;
       color: #6b7280; font-size: 16px; line-height: 1;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
     }
     .close-btn:hover { background: #f3f4f6; color: #111827; }
 
@@ -226,12 +226,10 @@
       this._overlayEl.className = 'overlay';
       this._overlayEl.innerHTML = `
         <div class="dialog">
+          <button class="close-btn" title="Cancel">&times;</button>
           <div class="dialog-header">
-            <div>
-              <div class="dialog-title">🤖 AI Verification</div>
-              <div class="dialog-sub">BotCaptcha — prove you're an AI</div>
-            </div>
-            <button class="close-btn" title="Cancel">&times;</button>
+            <div class="dialog-title">🤖 AI Verification</div>
+            <div class="dialog-sub">BotCaptcha — prove you're an AI</div>
           </div>
           <div class="timer-bar-wrap" style="display:none">
             <div class="timer-row">
