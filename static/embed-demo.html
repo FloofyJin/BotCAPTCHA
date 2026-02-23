@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BotCaptcha — Embed Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+      gap: 32px;
+    }
+
+    header { text-align: center; }
+    header h1  { font-size: 1.5rem; font-weight: 700; }
+    header p   { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+
+    /* ── Host form card ─────────────────────────────────────────────────────── */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 28px;
+      width: 100%; max-width: 480px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; }
+
+    form { display: flex; flex-direction: column; gap: 14px; }
+    label { font-size: 0.82rem; font-weight: 500; display: block; margin-bottom: 4px; }
+
+    input[type=text], input[type=email] {
+      width: 100%; padding: 9px 12px;
+      border: 1px solid #cbd5e1; border-radius: 6px;
+      font-size: 0.95rem; color: #1e293b;
+    }
+    input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+
+    .captcha-label { font-size: 0.82rem; font-weight: 500; }
+    .captcha-note  { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+
+    button[type=submit] {
+      padding: 10px; background: #6366f1; color: #fff;
+      border: none; border-radius: 6px;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    }
+    button[type=submit]:hover:not(:disabled) { background: #4f46e5; }
+    button[type=submit]:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── Dev panel ──────────────────────────────────────────────────────────── */
+    .dev-panel {
+      background: #0f172a; border-radius: 12px;
+      padding: 24px; width: 100%; max-width: 780px;
+      color: #e2e8f0;
+    }
+    .dev-panel h2 {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: #64748b; margin-bottom: 16px;
+    }
+    .dev-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    @media (max-width: 600px) { .dev-grid { grid-template-columns: 1fr; } }
+
+    .dev-block { display: flex; flex-direction: column; gap: 6px; }
+    .dev-label {
+      font-size: 0.65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em; color: #475569;
+    }
+    pre {
+      background: #1e293b; border-radius: 6px;
+      padding: 10px 12px;
+      font-family: 'Menlo', 'Courier New', monospace;
+      font-size: 0.7rem; color: #7dd3fc;
+      white-space: pre-wrap; word-break: break-all;
+      min-height: 56px; max-height: 180px; overflow-y: auto;
+    }
+    pre.muted { color: #334155; font-style: italic; }
+
+    .log-wrap { grid-column: 1 / -1; }
+    #devLog { color: #94a3b8; }
+    .ll { display: block; padding: 2px 0; border-bottom: 1px solid #1e293b; }
+    .ll:last-child { border: none; }
+    .ts  { color: #334155; margin-right: 6px; }
+    .ok  { color: #4ade80; }
+    .err { color: #f87171; }
+    .inf { color: #7dd3fc; }
+
+    .dev-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .dev-btn {
+      padding: 6px 14px; font-size: 0.75rem;
+      background: #1e293b; color: #cbd5e1;
+      border: 1px solid #334155; border-radius: 6px;
+      cursor: pointer; font-family: 'Menlo', monospace;
+    }
+    .dev-btn:hover { background: #334155; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>BotCaptcha — Embed Demo</h1>
+    <p>Simulates a third-party site embedding the widget. Click "Verify AI →" to open the challenge modal.</p>
+  </header>
+
+  <!-- ── Host form ─────────────────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>Request API Access</h2>
+    <form id="regForm" onsubmit="handleSubmit(event)">
+      <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Your name" autocomplete="off">
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="off">
+      </div>
+      <div>
+        <div class="captcha-label">AI Verification</div>
+        <!-- ── BotCaptcha widget ── -->
+        <div
+          class="ai-captcha"
+          id="captchaWidget"
+          data-sitekey="sk_demo_123456"
+          data-callback="onCaptchaPass"
+          style="margin-top: 6px;"
+        ></div>
+        <div class="captcha-note">Verifies the visitor is an AI agent, not a human.</div>
+      </div>
+      <button type="submit" id="submitBtn" disabled>Submit (verify first)</button>
+    </form>
+  </div>
+
+  <!-- ── Developer view ────────────────────────────────────────────────────── -->
+  <div class="dev-panel">
+    <h2>Developer View — Widget API</h2>
+
+    <div class="dev-grid">
+
+      <div class="dev-block">
+        <div class="dev-label">Challenge (available after modal opens)</div>
+        <pre id="devChallenge" class="muted">— click "Verify AI →" to load —</pre>
+      </div>
+
+      <div class="dev-block">
+        <div class="dev-label">Token + Verify Response</div>
+        <pre id="devToken" class="muted">—</pre>
+      </div>
+
+      <div class="dev-block log-wrap">
+        <div class="dev-label">Event Log</div>
+        <pre id="devLog"></pre>
+      </div>
+
+    </div>
+
+    <div class="dev-actions">
+      <button class="dev-btn" onclick="devStart()">start()</button>
+      <button class="dev-btn" onclick="devShowChallenge()">getChallenge()</button>
+      <button class="dev-btn" onclick="devReset()">reset()</button>
+      <button class="dev-btn" onclick="devGetToken()">getToken()</button>
+    </div>
+  </div>
+
+  <script src="/widget.js"></script>
+  <script>
+    const widgetEl    = document.getElementById('captchaWidget');
+    const submitBtn   = document.getElementById('submitBtn');
+    const devChallEl  = document.getElementById('devChallenge');
+    const devTokenEl  = document.getElementById('devToken');
+    const devLogEl    = document.getElementById('devLog');
+
+    // ── Logging ───────────────────────────────────────────────────────────────
+    function log(msg, type = 'inf') {
+      const ts   = new Date().toLocaleTimeString('en-US', { hour12: false });
+      const line = document.createElement('span');
+      line.className = 'll';
+      line.innerHTML = `<span class="ts">${ts}</span><span class="${type}">${msg}</span>`;
+      devLogEl.appendChild(line);
+      devLogEl.scrollTop = devLogEl.scrollHeight;
+      console.log('[BotCaptcha]', msg);
+    }
+
+    // ── Widget events ─────────────────────────────────────────────────────────
+    widgetEl.addEventListener('ai-captcha-ready', function (e) {
+      const c = e.detail.challenge;
+      devChallEl.className = '';
+      devChallEl.textContent = JSON.stringify({
+        challenge_id:     c.challenge_id,
+        duration_ms:      c.duration_ms,
+        grid_size:        c.grid_size,
+        text_snippet:     c.text_content.slice(0, 80) + '…',
+        grid_coords_text: c.grid_coords_text.slice(0, 100) + '…',
+      }, null, 2);
+      log('ai-captcha-ready — id: ' + c.challenge_id.slice(0, 8) + '… | window: ' + (c.duration_ms / 1000) + 's', 'inf');
+      log('Read full challenge: widgetEl.aiCaptcha.getChallenge()', 'inf');
+      log('Submit answer: await widgetEl.aiCaptcha.submit(wordMap, gridCoords)', 'inf');
+    });
+
+    widgetEl.addEventListener('ai-captcha-success', function (e) {
+      const { token, score } = e.detail;
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit';
+      devTokenEl.className = '';
+      devTokenEl.textContent = token;
+      log('ai-captcha-success — score: ' + (score * 100).toFixed(1) + '%', 'ok');
+    });
+
+    // ── data-callback global ──────────────────────────────────────────────────
+    function onCaptchaPass(token, score) {
+      log('onCaptchaPass() callback called', 'ok');
+    }
+
+    // ── Form submit (calls /api/verify as a host backend would) ───────────────
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const token = window.aiCaptcha.getToken(widgetEl);
+      if (!token) { log('No token — verify first', 'err'); return; }
+
+      log('Calling /api/verify…', 'inf');
+      try {
+        const res = await fetch('/api/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, sitekey: 'sk_demo_123456' }),
+        });
+        const result = await res.json();
+        devTokenEl.textContent = JSON.stringify(result, null, 2);
+        if (result.valid) {
+          log('✓ /api/verify valid — form accepted', 'ok');
+        } else {
+          log('✗ /api/verify rejected: ' + result.message, 'err');
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Submit (verify first)';
+        }
+      } catch (err) {
+        log('Verify request failed: ' + err.message, 'err');
+      }
+    }
+
+    // ── Dev buttons ───────────────────────────────────────────────────────────
+    function devStart()         { window.aiCaptcha.start(widgetEl);        log('start() called', 'inf'); }
+    function devShowChallenge() {
+      const d = window.aiCaptcha.getChallenge(widgetEl);
+      log('getChallenge() → ' + (d ? d.challenge_id.slice(0,8) + '…' : 'null'), 'inf');
+      console.log('[BotCaptcha] Full challenge:', d);
+    }
+    function devGetToken()      {
+      const t = window.aiCaptcha.getToken(widgetEl);
+      log('getToken() → ' + (t ? t.slice(0, 20) + '…' : 'null'), 'inf');
+    }
+    function devReset()         {
+      window.aiCaptcha.reset(widgetEl);
+      devChallEl.className = 'muted';
+      devChallEl.textContent = '— click "Verify AI →" to load —';
+      devTokenEl.className = 'muted';
+      devTokenEl.textContent = '—';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submit (verify first)';
+      log('reset() called', 'inf');
+    }
+  </script>
+</body>
+</html>

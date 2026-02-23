@@ -1,5 +1,14 @@
 # BotCaptcha Configuration File
 
+[auth]
+# HMAC-SHA256 secret for signing verification tokens. Change this before deploying.
+token_secret = "change-me-in-production-use-a-long-random-string"
+# How long a minted token stays valid (seconds). Hosts should verify promptly.
+token_ttl_secs = 300
+# Registered site keys. Requests with an unrecognised key are rejected.
+# Leave empty ([]) to accept any key (open/demo mode).
+site_keys = ["sk_demo_123456"]
+
 [server]
 host = "127.0.0.1"
 port = 3000

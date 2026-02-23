@@ -1,2 +1,5 @@
 /target
 .env
+.claude
+CONFIG_GUIDE.md
+CONTEXT.md

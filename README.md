@@ -1,4 +1,4 @@
-# BotCaptcha - AI-Only Challenge System
+# BotCaptcha - Reverse AI CAPTCHA (Completely Automated Public Turing test to tell Computers and Humans Apart)
 
 An inverse CAPTCHA that filters out humans and only allows AI to pass. Instead of proving you're human, BotCaptcha proves you're an AI by testing capabilities that humans lack at machine speed and precision.
 
@@ -30,26 +30,97 @@ The respondent must extract all coordinates and submit them sorted in reading or
 
 **Why AI passes**: An LLM trivially parses the prose, and sorting by `(row, col)` is a one-liner.
 
-## Architecture
+## Embedding in Your Website
 
-### Backend (Rust + Axum)
+### 1. Register a site key
 
-- `GET /api/challenge` — Generates and returns a new dual-puzzle challenge
-- `POST /api/submit` — Validates both answers, enforces timing, returns scores
-- Static file serving for the browser demo
+Add your site key to `config.toml` before starting the server:
 
-### Frontend (Vanilla JS)
+```toml
+[auth]
+token_secret = "change-me-in-production"
+site_keys    = ["sk_live_your_key_here"]
+```
 
-- Displays the word passage and grid puzzle side-by-side
-- Interactive 10×10 grid for manual testing
-- `window.BotCaptchaAPI` for programmatic AI integration
+### 2. Add the widget to your page
 
-### Test Agent (Python, `puzzleTest/`)
+```html
+<script src="https://yourdomain.com/widget.js" async defer></script>
+<div class="ai-captcha" data-sitekey="sk_live_your_key_here"></div>
+```
 
-- Fetches challenges via HTTP
-- Solves word puzzle with direct word counting
-- Solves grid puzzle by calling an OpenAI LLM to parse the prose
-- **90%+ pass rate** observed in testing
+The widget renders a **"Verify AI →"** button. Nothing is fetched and no timer starts until the button is clicked. An optional `data-callback` attribute names a global function to call when verification passes.
+
+```html
+<div class="ai-captcha"
+     data-sitekey="sk_live_your_key_here"
+     data-callback="onVerified">
+</div>
+```
+
+### 3. The AI agent solves the challenge
+
+Once the button is clicked the widget opens a modal showing both puzzles and the submission API. A browser-based AI agent reads and submits via JavaScript:
+
+```js
+const el = document.querySelector('.ai-captcha');
+
+// fires when challenge is loaded and timer is running
+el.addEventListener('ai-captcha-ready', async (e) => {
+  const c = e.detail.challenge;
+  // c.text_content     — word frequency passage
+  // c.grid_coords_text — natural-language grid description (parse with LLM)
+
+  // solve both puzzles, then submit
+  const result = await el.aiCaptcha.submit(wordFreqMap, sortedGridCoords);
+  // result.token — signed token if both puzzles scored ≥80%
+});
+```
+
+For agents that call your API directly over HTTP (curl, Python requests, etc.) the widget is not involved — they can call `/api/challenge` and `/api/submit` directly.
+
+### 4. Receive the token
+
+On success the widget automatically:
+- Injects `<input type="hidden" name="ai-captcha-response" value="TOKEN">` into the nearest ancestor `<form>`
+- Fires a `ai-captcha-success` CustomEvent on the container element
+- Calls the `data-callback` global function if set
+
+```js
+el.addEventListener('ai-captcha-success', (e) => {
+  console.log(e.detail.token);  // signed token string
+  console.log(e.detail.score);  // combined score 0.0–1.0
+});
+```
+
+### 5. Verify the token on your backend
+
+Your server should call `/api/verify` before trusting the submission. Tokens are single-use and expire after `token_ttl_secs` seconds (default 5 minutes).
+
+```
+POST /api/verify
+Content-Type: application/json
+
+{ "token": "...", "sitekey": "sk_live_your_key_here" }
+```
+
+```json
+{ "valid": true, "message": "Token is valid", "sitekey": "sk_live_your_key_here", "score": 0.95 }
+```
+
+### Widget JS API reference
+
+| Method | Description |
+|---|---|
+| `el.aiCaptcha.start()` | Fetch challenge and open modal (same as clicking the button) |
+| `el.aiCaptcha.getChallenge()` | Returns current challenge object or `null` |
+| `el.aiCaptcha.submit(wordMap, gridCoords)` | Submit answers; returns `Promise<{success, token?, score?, message}>` |
+| `el.aiCaptcha.getToken()` | Returns the verified token string or `null` |
+| `el.aiCaptcha.reset()` | Discard current challenge and return to idle |
+
+All methods are also available on `window.aiCaptcha` with the container element as the first argument: `window.aiCaptcha.submit(el, wordMap, gridCoords)`.
+
+---
 
 ## Running the Server
 
@@ -70,6 +141,8 @@ Server starts on `http://127.0.0.1:3000`
 
 ### GET /api/challenge
 
+Query params: `sitekey` (required for widget embeds; optional in demo mode).
+
 ```json
 {
   "challenge_id": "uuid",
@@ -89,21 +162,37 @@ Request:
   "answer": { "node": 6, "host": 4, "byte": 3 },
   "grid_answer": [
     { "col": 1, "row": 0 },
-    { "col": 0, "row": 1 },
-    ...
+    { "col": 0, "row": 1 }
   ]
 }
 ```
 
-Response:
+Response (success):
 ```json
 {
   "success": true,
   "message": "Success! Word: 100.0%, Grid: 100.0%",
   "score": 1.0,
   "word_score": 1.0,
-  "grid_score": 1.0
+  "grid_score": 1.0,
+  "token": "eyJjaGFsbGVuZ2VfaWQi....<signature>"
 }
+```
+
+Response (failure): same shape with `"success": false` and `"token": null`.
+
+### POST /api/verify
+
+Called by the **host's backend** to confirm a token is genuine, unexpired, and unused. Tokens are single-use — a second call with the same token returns `"valid": false`.
+
+Request:
+```json
+{ "token": "...", "sitekey": "sk_live_your_key_here" }
+```
+
+Response:
+```json
+{ "valid": true, "message": "Token is valid", "sitekey": "sk_live_your_key_here", "score": 0.95 }
 ```
 
 ## Configuration
@@ -111,6 +200,11 @@ Response:
 Edit `config.toml` to tune challenge parameters (auto-created on first run):
 
 ```toml
+[auth]
+token_secret   = "change-me-in-production"  # HMAC-SHA256 signing secret
+token_ttl_secs = 300                        # token lifetime in seconds
+site_keys      = ["sk_demo_123456"]         # registered embed keys; empty = open/demo mode
+
 [challenge]
 word_count_min = 150
 word_count_max = 250
@@ -147,6 +241,7 @@ python debug_test.py      # single verbose run with debug output
 
 ## Production Considerations
 
+- **Token secret**: Change `token_secret` in `config.toml` to a long random string before deploying
 - **Storage**: In-memory HashMap; add TTL cleanup or use Redis for production
 - **Rate limiting**: None currently; add before public deployment
-- **CORS**: Configure if frontend is on a different domain
+- **CORS**: Enabled for all origins (`*`) by default — restrict to known host domains in production

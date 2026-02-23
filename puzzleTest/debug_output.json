@@ -1,172 +1,147 @@
 {
-  "challenge_id": "e6f877c2-8617-435e-8feb-a7fdae40e1c0",
-  "duration_ms": 5780,
+  "challenge_id": "786ab156-06ab-41dc-bbee-5ba377636641",
+  "duration_ms": 4183,
   "word_puzzle": {
     "total_words": 195,
-    "unique_words": 50,
+    "unique_words": 49,
     "frequencies": {
-      "flag": 6,
-      "run": 4,
-      "how": 4,
-      "one": 3,
-      "not": 6,
-      "all": 7,
-      "list": 5,
-      "day": 6,
-      "data": 5,
-      "and": 5,
-      "she": 3,
-      "too": 5,
-      "its": 6,
-      "port": 3,
-      "path": 4,
-      "has": 4,
-      "hash": 5,
-      "get": 5,
-      "say": 9,
-      "him": 3,
-      "way": 3,
-      "old": 5,
-      "new": 4,
-      "the": 2,
-      "node": 2,
-      "you": 4,
-      "code": 5,
-      "put": 7,
-      "was": 7,
-      "see": 2,
-      "loop": 3,
+      "node": 3,
       "host": 3,
-      "can": 5,
-      "are": 3,
+      "new": 5,
+      "its": 4,
+      "set": 5,
+      "now": 4,
+      "and": 5,
+      "link": 4,
+      "type": 4,
+      "man": 4,
+      "are": 4,
+      "him": 3,
+      "put": 6,
+      "one": 5,
+      "byte": 3,
+      "hash": 4,
+      "file": 3,
+      "can": 3,
+      "data": 7,
+      "for": 12,
+      "way": 3,
+      "use": 6,
+      "she": 3,
+      "was": 1,
+      "loop": 6,
+      "not": 4,
+      "has": 4,
+      "old": 8,
+      "out": 6,
+      "our": 3,
+      "port": 2,
+      "path": 8,
+      "day": 2,
+      "run": 2,
       "two": 4,
-      "link": 3,
-      "type": 5,
-      "out": 3,
-      "our": 6,
-      "for": 1,
-      "set": 1,
-      "byte": 4,
-      "but": 1,
-      "who": 3,
-      "file": 4,
-      "tree": 3,
-      "now": 1,
-      "let": 1,
-      "use": 1,
-      "man": 1
+      "tree": 5,
+      "the": 3,
+      "let": 5,
+      "list": 4,
+      "say": 2,
+      "too": 3,
+      "but": 2,
+      "see": 1,
+      "who": 4,
+      "flag": 2,
+      "how": 3,
+      "get": 2,
+      "code": 3,
+      "all": 3
     }
   },
   "grid_puzzle": {
     "grid_size": 10,
-    "prose": "Identify these 13 positions on the grid: the cell where column 7 meets row 5, and then the cell where column 9 meets row 0, then column 8, row 9; next, column 7, row 3. Also mark column 9, row 4, as well as the cell where column 9 meets row 1, and then the square at column 4 in row 6. Another target is at 1 columns from the left, 2 rows from the top; next, the cell where column 7 meets row 0, and then the square at column 6 in row 8, then the cell where column 9 meets row 6; next, the square at column 9 in row 8. Also mark the cell at column 3 and row 3. Note: the positions above are listed in scrambled order \u2014 you must select them on the grid from top to bottom, left to right.",
-    "llm_raw_output": "```json\n[{\"col\": 1, \"row\": 2}, {\"col\": 3, \"row\": 3}, {\"col\": 7, \"row\": 0}, {\"col\": 9, \"row\": 0}, {\"col\": 7, \"row\": 3}, {\"col\": 9, \"row\": 1}, {\"col\": 4, \"row\": 6}, {\"col\": 7, \"row\": 5}, {\"col\": 9, \"row\": 4}, {\"col\": 9, \"row\": 6}, {\"col\": 6, \"row\": 8}, {\"col\": 9, \"row\": 8}, {\"col\": 8, \"row\": 9}]\n```",
+    "prose": "Your 10 target squares can be found at 3 columns from the left, 1 rows from the top. Do not overlook the cell at column 9 and row 4, followed by the square at column 3 in row 5, and then 5 columns from the left, 2 rows from the top. Also mark 2 columns from the left, 8 rows from the top. Also mark the cell at column 9 and row 0; continuing with column 7, row 6. Do not overlook 2 columns from the left, 5 rows from the top, and then 9 columns from the left, 3 rows from the top; next, the square at column 8 in row 4. Note: the positions above are listed in scrambled order \u2014 you must select them on the grid from top to bottom, left to right.",
+    "llm_raw_output": "```json\n[{\"col\": 9, \"row\": 0}, {\"col\": 3, \"row\": 1}, {\"col\": 5, \"row\": 2}, {\"col\": 9, \"row\": 3}, {\"col\": 8, \"row\": 4}, {\"col\": 9, \"row\": 4}, {\"col\": 2, \"row\": 5}, {\"col\": 3, \"row\": 5}, {\"col\": 7, \"row\": 6}, {\"col\": 2, \"row\": 8}]\n```",
     "extracted_coords": [
       {
-        "col": 1,
-        "row": 2
+        "col": 9,
+        "row": 0
       },
       {
         "col": 3,
-        "row": 3
-      },
-      {
-        "col": 7,
-        "row": 0
-      },
-      {
-        "col": 9,
-        "row": 0
-      },
-      {
-        "col": 7,
-        "row": 3
-      },
-      {
-        "col": 9,
         "row": 1
       },
       {
-        "col": 4,
-        "row": 6
+        "col": 5,
+        "row": 2
       },
       {
-        "col": 7,
-        "row": 5
+        "col": 9,
+        "row": 3
+      },
+      {
+        "col": 8,
+        "row": 4
       },
       {
         "col": 9,
         "row": 4
       },
       {
-        "col": 9,
+        "col": 2,
+        "row": 5
+      },
+      {
+        "col": 3,
+        "row": 5
+      },
+      {
+        "col": 7,
         "row": 6
       },
       {
-        "col": 6,
+        "col": 2,
         "row": 8
-      },
-      {
-        "col": 9,
-        "row": 8
-      },
-      {
-        "col": 8,
-        "row": 9
       }
     ],
     "sorted_coords": [
       {
-        "col": 7,
-        "row": 0
-      },
-      {
         "col": 9,
         "row": 0
-      },
-      {
-        "col": 9,
-        "row": 1
-      },
-      {
-        "col": 1,
-        "row": 2
       },
       {
         "col": 3,
+        "row": 1
+      },
+      {
+        "col": 5,
+        "row": 2
+      },
+      {
+        "col": 9,
         "row": 3
       },
       {
-        "col": 7,
-        "row": 3
+        "col": 8,
+        "row": 4
       },
       {
         "col": 9,
         "row": 4
       },
       {
-        "col": 7,
+        "col": 2,
         "row": 5
       },
       {
-        "col": 4,
+        "col": 3,
+        "row": 5
+      },
+      {
+        "col": 7,
         "row": 6
       },
       {
-        "col": 9,
-        "row": 6
-      },
-      {
-        "col": 6,
+        "col": 2,
         "row": 8
-      },
-      {
-        "col": 9,
-        "row": 8
-      },
-      {
-        "col": 8,
-        "row": 9
       }
     ]
   },
@@ -175,13 +150,14 @@
     "message": "Success! Word: 100.0%, Grid: 100.0%",
     "score": 1.0,
     "word_score": 1.0,
-    "grid_score": 1.0
+    "grid_score": 1.0,
+    "token": "eyJjaGFsbGVuZ2VfaWQiOiI3ODZhYjE1Ni0wNmFiLTQxZGMtYmJlZS01YmEzNzc2MzY2NDEiLCJzaXRla2V5IjoiIiwic2NvcmUiOjEuMCwiaWF0IjoxNzcxODMyMTc5NTA5LCJleHAiOjE3NzE4MzI0Nzk1MDl9.mTytoeTxVfsEWWH6OegTyWEBZzyM6qP98FnGPaPlrgs"
   },
   "timing": {
-    "load_ms": 2.7322769165039062,
-    "llm_ms": 1957.8993320465088,
-    "submit_ms": 1.3623237609863281,
-    "total_ms": 1962.4180793762207,
-    "limit_ms": 5780
+    "load_ms": 2.462148666381836,
+    "llm_ms": 2085.9994888305664,
+    "submit_ms": 1.7337799072265625,
+    "total_ms": 2090.698480606079,
+    "limit_ms": 4183
   }
 }

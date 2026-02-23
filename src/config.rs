@@ -7,6 +7,18 @@ pub struct Config {
     pub server: ServerConfig,
     pub challenge: ChallengeConfig,
     pub validation: ValidationConfig,
+    pub auth: AuthConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuthConfig {
+    /// HMAC-SHA256 secret for signing tokens. Change in production.
+    pub token_secret: String,
+    /// Signed token lifetime in seconds.
+    pub token_ttl_secs: u64,
+    /// Registered site keys allowed to use this service.
+    /// If empty, any sitekey (including none) is accepted (open/demo mode).
+    pub site_keys: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -35,53 +47,11 @@ pub struct ValidationConfig {
 }
 
 impl Config {
-    /// Load configuration from a TOML file
+    /// Load configuration from a TOML file.
     pub fn from_file(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
         let contents = fs::read_to_string(path)?;
         let config: Config = toml::from_str(&contents)?;
         Ok(config)
-    }
-
-    /// Create default configuration
-    pub fn default() -> Self {
-        Config {
-            server: ServerConfig {
-                host: "127.0.0.1".to_string(),
-                port: 3000,
-            },
-            challenge: ChallengeConfig {
-                word_count_min: 150,
-                word_count_max: 250,
-                duration_ms_min: 4000,
-                duration_ms_max: 6000,
-                word_pool: vec![
-                    "the", "and", "for", "are", "but", "not", "you", "all", "can",
-                    "was", "one", "our", "out", "day", "get", "has", "him", "how",
-                    "man", "new", "now", "old", "see", "two", "way", "who", "its",
-                    "let", "put", "say", "she", "too", "use", "set", "run",
-                    "data", "code", "node", "port", "host", "byte", "file", "path",
-                    "loop", "list", "hash", "tree", "link", "type", "flag",
-                ]
-                .iter()
-                .map(|s| s.to_string())
-                .collect(),
-                grid_size: 10,
-                grid_coords_min: 10,
-                grid_coords_max: 15,
-            },
-            validation: ValidationConfig {
-                min_time_ms: 0,
-                max_time_ms: 10000,
-                success_threshold: 0.8,
-            },
-        }
-    }
-
-    /// Save configuration to a TOML file
-    pub fn save_to_file(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
-        let toml_string = toml::to_string_pretty(self)?;
-        fs::write(path, toml_string)?;
-        Ok(())
     }
 }
 

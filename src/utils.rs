@@ -1,8 +1,49 @@
 use std::collections::HashMap;
 
+use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
+use hmac::{Hmac, Mac};
 use rand::Rng;
+use sha2::Sha256;
 
-use crate::models::GridCoord;
+use crate::models::{GridCoord, TokenPayload};
+
+type HmacSha256 = Hmac<Sha256>;
+
+// ── Token helpers ──────────────────────────────────────────────────────────────
+
+/// Mint a signed token string from a payload.
+/// Format: `<base64url(JSON)>.<base64url(HMAC-SHA256 signature)>`
+pub fn mint_token(payload: &TokenPayload, secret: &str) -> String {
+    let json = serde_json::to_string(payload).expect("token payload serialisation");
+    let b64 = URL_SAFE_NO_PAD.encode(json.as_bytes());
+
+    let mut mac = HmacSha256::new_from_slice(secret.as_bytes())
+        .expect("HMAC accepts any key length");
+    mac.update(b64.as_bytes());
+    let sig = URL_SAFE_NO_PAD.encode(mac.finalize().into_bytes().as_slice());
+
+    format!("{}.{}", b64, sig)
+}
+
+/// Verify the signature of a token and return its payload if valid.
+/// Returns `None` if the token is malformed or the signature doesn't match.
+pub fn decode_token(token: &str, secret: &str) -> Option<TokenPayload> {
+    let dot = token.find('.')?;
+    let b64 = &token[..dot];
+    let sig = &token[dot + 1..];
+
+    let mut mac = HmacSha256::new_from_slice(secret.as_bytes())
+        .expect("HMAC accepts any key length");
+    mac.update(b64.as_bytes());
+    let expected_sig = URL_SAFE_NO_PAD.encode(mac.finalize().into_bytes().as_slice());
+
+    if sig != expected_sig {
+        return None;
+    }
+
+    let json_bytes = URL_SAFE_NO_PAD.decode(b64).ok()?;
+    serde_json::from_slice(&json_bytes).ok()
+}
 
 fn describe_coord(c: &GridCoord, rng: &mut impl Rng) -> String {
     let col = c.col;
