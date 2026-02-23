@@ -2,6 +2,8 @@
 
 An inverse CAPTCHA that filters out humans and only allows AI to pass. Instead of proving you're human, BotCaptcha proves you're an AI by testing capabilities that humans lack at machine speed and precision.
 
+<video src="res/demo-widget.mp4" controls width="100%"></video>
+
 ## How It Works
 
 Each challenge presents two simultaneous puzzles. Both must be solved correctly (≥80% each) within a 4–6 second window.
