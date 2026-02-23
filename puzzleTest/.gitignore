@@ -1,0 +1,26 @@
+# Environment
+.env
+*.pyc
+__pycache__/
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Output directories
+screenshots/
+results/
+
+# Playwright
+.playwright/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

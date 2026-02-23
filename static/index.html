@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotCaptcha - AI-Only Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        .subtitle {
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            color: #00aa00;
+        }
+        #text-container {
+            width: 800px;
+            max-width: 100%;
+            height: 280px;
+            overflow-y: auto;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            background: #000;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        #challenge-text {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #00cc00;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        #challenge-text.placeholder {
+            color: #005500;
+            font-size: 0.9em;
+        }
+        .answer-label {
+            width: 800px;
+            max-width: 100%;
+            font-size: 0.85em;
+            color: #00aa00;
+            margin-bottom: 6px;
+        }
+        #answer-input {
+            width: 800px;
+            max-width: 100%;
+            height: 110px;
+            background: #001a00;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            padding: 10px;
+            resize: vertical;
+            margin-bottom: 15px;
+            display: block;
+        }
+        #answer-input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+        }
+        #answer-input::placeholder {
+            color: #005500;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #001a00;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover:not(:disabled) {
+            background: #003300;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        #status {
+            text-align: center;
+            font-size: 1.05em;
+            min-height: 50px;
+            padding: 10px;
+            border: 1px solid #00aa00;
+            background: #001a00;
+            width: 800px;
+            max-width: 100%;
+            margin-bottom: 20px;
+        }
+        .timer {
+            font-size: 1.3em;
+            color: #ffff00;
+            text-shadow: 0 0 10px #ffff00;
+        }
+        .success { color: #00ff00; }
+        .error {
+            color: #ff4444;
+            text-shadow: 0 0 8px #ff0000;
+        }
+        .info {
+            padding: 15px;
+            border: 1px solid #00aa00;
+            background: #001a00;
+            width: 800px;
+            max-width: 100%;
+            font-size: 0.82em;
+            line-height: 1.7;
+            color: #00cc00;
+        }
+        .info code {
+            color: #ffff00;
+            background: #002200;
+            padding: 1px 4px;
+        }
+        .info strong {
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <h1>BotCaptcha</h1>
+    <div class="subtitle">AI-Only Challenge: Humans Need Not Apply</div>
+
+    <div id="text-container">
+        <pre id="challenge-text" class="placeholder">[ Click "Start Challenge" to load the passage ]</pre>
+    </div>
+
+    <div class="answer-label">Your answer — JSON object mapping each word to its count:</div>
+    <textarea
+        id="answer-input"
+        placeholder='{"the": 12, "and": 8, "for": 5, ...}'
+        spellcheck="false"
+    ></textarea>
+
+    <div class="controls">
+        <button id="startBtn">Start Challenge</button>
+        <button id="submitBtn" disabled>Submit Answer</button>
+    </div>
+
+    <div id="status">Click "Start Challenge" to begin</div>
+
+    <div class="info">
+        <strong>How it works:</strong><br>
+        1. Click "Start Challenge" to receive a passage of text<br>
+        2. Count the number of times each word appears in the passage<br>
+        3. Enter your answer as a JSON object: <code>{"word": count, "other": count, ...}</code><br>
+        4. Click "Submit Answer" before the time limit expires<br>
+        5. 80% of word counts must be exactly correct to pass<br>
+        <br>
+        <strong>For AI integration (programmatic API):</strong><br>
+        <code>const c = await window.BotCaptchaAPI.getChallenge();</code><br>
+        <code>// c.text_content — the passage &nbsp; c.challenge_id — needed for submit</code><br>
+        <code>const result = await window.BotCaptchaAPI.submitChallenge(c.challenge_id, freqMap);</code><br>
+        <br>
+        <strong>Why humans fail:</strong> Counting word frequencies across 150–250 words and
+        producing exact JSON output is trivial for a program but extremely tedious for a person.
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

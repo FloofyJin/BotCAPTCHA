@@ -1,0 +1,35 @@
+# BotCaptcha Configuration File
+
+[server]
+host = "127.0.0.1"
+port = 3000
+
+[challenge]
+# Total number of words in the generated passage (sampled with repetition from word_pool)
+word_count_min = 150
+word_count_max = 250
+
+# Challenge time limit in milliseconds (average 5 seconds)
+duration_ms_min = 4000
+duration_ms_max = 6000
+
+# Pool of words to sample from. Each word may appear many times in the passage.
+# More words = harder (more unique entries to count). Fewer = easier.
+word_pool = [
+    "the", "and", "for", "are", "but", "not", "you", "all", "can",
+    "was", "one", "our", "out", "day", "get", "has", "him", "how",
+    "man", "new", "now", "old", "see", "two", "way", "who", "its",
+    "let", "put", "say", "she", "too", "use", "set", "run",
+    "data", "code", "node", "port", "host", "byte", "file", "path",
+    "loop", "list", "hash", "tree", "link", "type", "flag",
+]
+
+[validation]
+# Minimum time before submission is accepted (0 = no minimum, bots can answer instantly)
+min_time_ms = 0
+
+# Maximum time before challenge expires (must be >= duration_ms_max + network buffer)
+max_time_ms = 10000
+
+# Fraction of word counts that must be exactly correct to pass (0.8 = 80%)
+success_threshold = 0.8
